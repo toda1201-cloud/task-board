@@ -7,7 +7,7 @@
 - プロジェクト名: task-board
 - 概要: タスクの追加・完了切り替え・削除ができるタスクボードアプリ
 - 技術スタック: React 19 + Vite(JavaScript / JSX)、CSS は素の CSS
-- データ: 現在はメモリ上の state のみ(リロードで消える)
+- データ: ブラウザの localStorage(キー `task-board.tasks`)に JSON で保存。タスク変更のたびに保存し、起動時に読み込む
 
 ## ディレクトリ構成
 
@@ -15,7 +15,7 @@
 index.html          Vite のエントリ HTML
 vite.config.js      Vite 設定
 src/main.jsx        React のマウント
-src/App.jsx         タスク一覧の state と追加・切替・削除ロジック
+src/App.jsx         タスク一覧の state、追加・切替・削除ロジック、localStorage 保存
 src/TaskItem.jsx    タスク1件の表示(チェックボックス・削除ボタン)
 src/index.css       スタイル(完了タスクは .task-item.done でグレー表示)
 .claude/launch.json Claude のプレビュー用 dev サーバー設定

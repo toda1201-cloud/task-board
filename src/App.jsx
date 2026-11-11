@@ -1,9 +1,33 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import TaskItem from './TaskItem.jsx'
 
+const STORAGE_KEY = 'task-board.tasks'
+
+// localStorage からタスクを読み込む。壊れたデータや利用不可の場合は空配列。
+function loadTasks() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY))
+    if (!Array.isArray(saved)) return []
+    return saved.filter(
+      (t) => t && typeof t.id === 'string' && typeof t.title === 'string' && typeof t.done === 'boolean',
+    )
+  } catch {
+    return []
+  }
+}
+
 export default function App() {
-  const [tasks, setTasks] = useState([])
+  const [tasks, setTasks] = useState(loadTasks)
   const [text, setText] = useState('')
+
+  // タスクが変わるたびに保存する
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
+    } catch {
+      // プライベートモードや容量超過などで保存できない場合は無視
+    }
+  }, [tasks])
 
   const addTask = (e) => {
     e.preventDefault()
