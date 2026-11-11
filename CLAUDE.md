@@ -13,13 +13,21 @@
 
 ```
 index.html          Vite のエントリ HTML
-vite.config.js      Vite 設定
+vite.config.js      Vite 設定(GitHub Pages 用に base: './')
 src/main.jsx        React のマウント
 src/App.jsx         タスク一覧の state、追加・切替・削除ロジック、localStorage 保存
 src/TaskItem.jsx    タスク1件の表示(チェックボックス・削除ボタン)
 src/index.css       スタイル(完了タスクは .task-item.done でグレー表示)
 .claude/launch.json Claude のプレビュー用 dev サーバー設定
+.github/workflows/deploy.yml  GitHub Pages への自動デプロイ
 ```
+
+## デプロイ
+
+- main にプッシュすると GitHub Actions がビルドし、GitHub Pages に自動デプロイする
+- 公開 URL: https://toda1201-cloud.github.io/task-board/
+- アセットは相対パス(`base: './'`)で出力しているため、リポジトリ名を変えても動く
+- ルーティングを追加する場合は、サブパスでの動作に注意すること
 
 ## 開発コマンド
 
