@@ -1,83 +1,59 @@
 import { useEffect, useState } from 'react'
-import TaskItem from './TaskItem.jsx'
-
-const STORAGE_KEY = 'task-board.tasks'
-
-// localStorage からタスクを読み込む。壊れたデータや利用不可の場合は空配列。
-function loadTasks() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY))
-    if (!Array.isArray(saved)) return []
-    return saved.filter(
-      (t) => t && typeof t.id === 'string' && typeof t.title === 'string' && typeof t.done === 'boolean',
-    )
-  } catch {
-    return []
-  }
-}
+import { HashRouter, Navigate, Route, Routes } from 'react-router'
+import { supabase } from './supabaseClient.js'
+import LoginPage from './LoginPage.jsx'
+import SignupPage from './SignupPage.jsx'
+import PropertyListPage from './PropertyListPage.jsx'
 
 export default function App() {
-  const [tasks, setTasks] = useState(loadTasks)
-  const [text, setText] = useState('')
+  // undefined = 確認中、null = 未ログイン、オブジェクト = ログイン中
+  const [session, setSession] = useState(undefined)
 
-  // タスクが変わるたびに保存する
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
-    } catch {
-      // プライベートモードや容量超過などで保存できない場合は無視
-    }
-  }, [tasks])
+    if (!supabase) return
 
-  const addTask = (e) => {
-    e.preventDefault()
-    const title = text.trim()
-    if (!title) return
-    setTasks((prev) => [...prev, { id: crypto.randomUUID(), title, done: false }])
-    setText('')
+    // 起動時に保存済みのセッションを読み込む
+    supabase.auth.getSession().then(({ data }) => setSession(data.session))
+
+    // ログイン・ログアウトなどの認証状態の変化を監視する
+    const { data } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession)
+    })
+    return () => data.subscription.unsubscribe()
+  }, [])
+
+  // .env が未設定の場合は、原因が分かるようにメッセージを出す
+  if (!supabase) {
+    return (
+      <main className="auth-page">
+        <h1>設定エラー</h1>
+        <p className="form-error">
+          Supabase の接続情報が設定されていません。.env に VITE_SUPABASE_URL と
+          VITE_SUPABASE_PUBLISHABLE_KEY を設定してください。
+        </p>
+      </main>
+    )
   }
 
-  const toggleTask = (id) => {
-    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)))
+  // セッション確認中は何も描画しない(ログイン画面が一瞬表示されるのを防ぐ)
+  if (session === undefined) {
+    return <p className="loading">読み込み中…</p>
   }
 
-  const deleteTask = (id) => {
-    setTasks((prev) => prev.filter((t) => t.id !== id))
-  }
-
-  const doneCount = tasks.filter((t) => t.done).length
-
+  // GitHub Pages のサブパスでもリロードで 404 にならないよう HashRouter を使う
   return (
-    <main className="board">
-      <h1>タスクボード</h1>
-
-      <form className="add-form" onSubmit={addTask}>
-        <input
-          type="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="新しいタスクを入力"
-          aria-label="新しいタスク"
+    <HashRouter>
+      <Routes>
+        {/* ログイン済みならログイン・会員登録画面は物件一覧へ移動 */}
+        <Route path="/login" element={session ? <Navigate to="/properties" replace /> : <LoginPage />} />
+        <Route path="/signup" element={session ? <Navigate to="/properties" replace /> : <SignupPage />} />
+        {/* 未ログインで物件一覧を開いたらログイン画面へリダイレクト */}
+        <Route
+          path="/properties"
+          element={session ? <PropertyListPage session={session} /> : <Navigate to="/login" replace />}
         />
-        <button type="submit" disabled={!text.trim()}>
-          追加
-        </button>
-      </form>
-
-      {tasks.length === 0 ? (
-        <p className="empty">タスクはまだありません</p>
-      ) : (
-        <>
-          <ul className="task-list">
-            {tasks.map((task) => (
-              <TaskItem key={task.id} task={task} onToggle={toggleTask} onDelete={deleteTask} />
-            ))}
-          </ul>
-          <p className="summary">
-            完了 {doneCount} / {tasks.length}
-          </p>
-        </>
-      )}
-    </main>
+        <Route path="*" element={<Navigate to={session ? '/properties' : '/login'} replace />} />
+      </Routes>
+    </HashRouter>
   )
 }

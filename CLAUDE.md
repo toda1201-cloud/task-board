@@ -5,8 +5,16 @@
 ## プロジェクト概要
 
 - プロジェクト名: task-board
-- 概要: タスクの追加・完了切り替え・削除ができるタスクボードアプリ
-- データ: ブラウザの localStorage(キー `task-board.tasks`)に JSON で保存。タスク変更のたびに保存し、起動時に読み込む
+- 概要: Supabase 認証付きの不動産管理 Web アプリ(旧タスクボードを置き換え)
+- 認証: メールアドレス + パスワードで会員登録・ログイン(Supabase Auth)。セッションは supabase-js が localStorage に保存
+- 画面: ログイン(`#/login`)、会員登録(`#/signup`)、物件一覧(`#/properties`、ログイン必須。未ログインはログイン画面へリダイレクト)
+- データ: 物件はダミーデータ(`src/properties.js`)
+
+## 環境変数
+
+- `.env.example` を `.env` にコピーし、`VITE_SUPABASE_URL` と `VITE_SUPABASE_PUBLISHABLE_KEY` を設定する
+- `.env` は `.gitignore` で除外済み。コミットしないこと
+- GitHub Pages のビルド用に、リポジトリの Actions Secrets にも同名で登録する
 
 ## デプロイ先
 
@@ -21,8 +29,8 @@ https://toda1201-cloud.github.io/task-board/
 | 言語 | JavaScript(ES Modules)、JSX。TypeScript は未使用 |
 | スタイル | 素の CSS(`src/index.css` 1ファイル、CSS 変数で色を管理)。CSS フレームワークなし |
 | 状態管理 | React の `useState` / `useEffect` のみ。外部ライブラリなし |
-| 永続化 | ブラウザの localStorage |
-| バックエンド(導入中) | Supabase(`@supabase/supabase-js` ^2.119)。SPA のため `@supabase/ssr` は不要 |
+| ルーティング | `react-router` ^8.5(GitHub Pages のサブパスで動くよう `HashRouter` を使用) |
+| 認証 | Supabase Auth(`@supabase/supabase-js` ^2.119)。SPA のため `@supabase/ssr` は不要 |
 | ホスティング | GitHub Pages(GitHub Actions で自動デプロイ) |
 | 実行環境 | Node.js(CI は LTS 版、`npm ci` でインストール) |
 
@@ -34,9 +42,15 @@ https://toda1201-cloud.github.io/task-board/
 index.html          Vite のエントリ HTML
 vite.config.js      Vite 設定(GitHub Pages 用に base: './')
 src/main.jsx        React のマウント
-src/App.jsx         タスク一覧の state、追加・切替・削除ロジック、localStorage 保存
-src/TaskItem.jsx    タスク1件の表示(チェックボックス・削除ボタン)
-src/index.css       スタイル(完了タスクは .task-item.done でグレー表示)
+src/App.jsx         セッション管理(onAuthStateChange)とルーティング、未ログイン時のリダイレクト
+src/supabaseClient.js  Supabase クライアント(.env の値で生成。未設定なら null)
+src/LoginPage.jsx   ログイン画面
+src/SignupPage.jsx  会員登録画面
+src/PropertyListPage.jsx  物件一覧画面(ログアウトボタン付き)
+src/PropertyCard.jsx  物件1件のカード(物件名・家賃・エリア)
+src/properties.js   物件のダミーデータ
+src/index.css       スタイル
+.env.example        環境変数のひな形(.env は除外)
 .claude/launch.json Claude のプレビュー用 dev サーバー設定
 .github/workflows/deploy.yml  GitHub Pages への自動デプロイ
 ```
