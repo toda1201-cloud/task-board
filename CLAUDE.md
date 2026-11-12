@@ -22,6 +22,11 @@
 
 https://toda1201-cloud.github.io/task-board/
 
+## デプロイ情報
+
+- 本番URL:https://task-board-sooty-eight.vercel.app
+- Supabaseプロジェクト名:realestate-app
+
 ## 技術スタック
 
 | 分類 | 使用技術 |
