@@ -159,6 +159,95 @@ button:disabled {
   margin-bottom: 16px;
 }
 
+.primary-button {
+  background: var(--accent);
+  color: #fff;
+}
+
+.secondary-button {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.secondary-button:hover {
+  background: #eceef1;
+}
+
+.delete-button {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid var(--border);
+}
+
+.delete-button:hover {
+  background: #fdecee;
+}
+
+.add-button {
+  margin-bottom: 20px;
+}
+
+.empty {
+  color: var(--muted);
+}
+
+/* 物件の登録・編集フォーム */
+.property-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px 16px;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+/* カード内の編集フォームは枠を重ねない */
+.property-card.editing .property-form {
+  grid-template-columns: 1fr;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.property-form-title,
+.property-form .form-error,
+.form-actions {
+  grid-column: 1 / -1;
+}
+
+.property-form-title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.property-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.property-form input {
+  padding: 8px 10px;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.property-form input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .property-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -175,9 +264,38 @@ button:disabled {
   border-radius: 12px;
 }
 
+.property-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
 .property-name {
-  margin: 0 0 12px;
+  margin: 0;
   font-size: 1.1rem;
+  overflow-wrap: anywhere;
+}
+
+.property-layout {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  color: var(--accent);
+  background: #e8effd;
+  border-radius: 999px;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.card-actions button {
+  padding: 6px 12px;
 }
 
 .property-rent {

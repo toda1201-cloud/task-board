@@ -8,7 +8,9 @@
 - 概要: Supabase 認証付きの不動産管理 Web アプリ(旧タスクボードを置き換え)
 - 認証: メールアドレス + パスワードで会員登録・ログイン(Supabase Auth)。セッションは supabase-js が localStorage に保存
 - 画面: ログイン(`#/login`)、会員登録(`#/signup`)、物件一覧(`#/properties`、ログイン必須。未ログインはログイン画面へリダイレクト)
-- データ: 物件はダミーデータ(`src/properties.js`)
+- データ: Supabase の `properties` テーブル(物件名 `name`・家賃 `rent`・エリア `area`・間取り `layout`・登録者 `user_id`)。物件一覧画面で登録・編集・削除できる
+- テーブル定義と RLS は `supabase/schema.sql`。Supabase の SQL Editor で実行する。RLS で「自分が登録した物件のみ」表示・登録・編集・削除できる
+- テーブルを変更したら `supabase/schema.sql` も更新すること
 
 ## 環境変数
 
@@ -46,9 +48,10 @@ src/App.jsx         セッション管理(onAuthStateChange)とルーティン�
 src/supabaseClient.js  Supabase クライアント(.env の値で生成。未設定なら null)
 src/LoginPage.jsx   ログイン画面
 src/SignupPage.jsx  会員登録画面
-src/PropertyListPage.jsx  物件一覧画面(ログアウトボタン付き)
-src/PropertyCard.jsx  物件1件のカード(物件名・家賃・エリア)
-src/properties.js   物件のダミーデータ
+src/PropertyListPage.jsx  物件一覧画面。Supabase との CRUD(取得・登録・更新・削除)とログアウト
+src/PropertyCard.jsx  物件1件のカード(物件名・家賃・エリア・間取り、編集・削除ボタン)
+src/PropertyForm.jsx  物件の登録・編集フォーム(property を渡すと編集モード)
+supabase/schema.sql テーブル作成と RLS ポリシーの SQL
 src/index.css       スタイル
 .env.example        環境変数のひな形(.env は除外)
 .claude/launch.json Claude のプレビュー用 dev サーバー設定
