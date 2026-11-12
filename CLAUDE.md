@@ -22,7 +22,7 @@ https://toda1201-cloud.github.io/task-board/
 | スタイル | 素の CSS(`src/index.css` 1ファイル、CSS 変数で色を管理)。CSS フレームワークなし |
 | 状態管理 | React の `useState` / `useEffect` のみ。外部ライブラリなし |
 | 永続化 | ブラウザの localStorage |
-| バックエンド(導入中) | Supabase(`@supabase/supabase-js` ^2.119、`@supabase/ssr` ^0.12) |
+| バックエンド(導入中) | Supabase(`@supabase/supabase-js` ^2.119)。SPA のため `@supabase/ssr` は不要 |
 | ホスティング | GitHub Pages(GitHub Actions で自動デプロイ) |
 | 実行環境 | Node.js(CI は LTS 版、`npm ci` でインストール) |
 
