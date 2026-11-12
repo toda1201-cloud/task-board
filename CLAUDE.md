@@ -56,6 +56,7 @@ src/index.css       スタイル
 .env.example        環境変数のひな形(.env は除外)
 .claude/launch.json Claude のプレビュー用 dev サーバー設定
 .github/workflows/deploy.yml  GitHub Pages への自動デプロイ
+vercel.json         Vercel 用設定(全 URL を index.html に書き換え。環境変数はダッシュボードで設定)
 ```
 
 ## デプロイ手順
